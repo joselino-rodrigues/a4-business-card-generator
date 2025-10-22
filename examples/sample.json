@@ -1,0 +1,20 @@
+[
+  {
+    "name": "João Silva",
+    "title": "Desenvolvedor Full Stack",
+    "company": "Tech Solutions",
+    "phone": "(11) 99999-9999",
+    "email": "joao@techsolutions.com",
+    "website": "www.techsolutions.com",
+    "logo": "./logo.png"
+  },
+  {
+    "name": "Maria Oliveira",
+    "title": "Designer Gráfico",
+    "company": "Creative Studio",
+    "phone": "(11) 98888-8888",
+    "email": "maria@creativestudio.com",
+    "website": "www.creativestudio.com",
+    "logo": "./logo.png"
+  }
+]

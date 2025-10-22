@@ -1,0 +1,99 @@
+[
+  {
+    "name": "João Silva",
+    "title": "Desenvolvedor Full Stack",
+    "company": "Tech Solutions Ltda",
+    "phone": "(11) 99999-9999",
+    "email": "joao@techsolutions.com",
+    "website": "www.techsolutions.com",
+    "logo": "examples/assets/logo-tech.png"
+  },
+  {
+    "name": "Maria Santos",
+    "title": "Gerente de Projetos",
+    "company": "Inovação Digital",
+    "phone": "(11) 88888-8888",
+    "email": "maria@inovacaodigital.com",
+    "website": "www.inovacaodigital.com"
+  },
+  {
+    "name": "Pedro Costa",
+    "title": "Designer UX/UI",
+    "company": "Creative Studio",
+    "phone": "(11) 77777-7777",
+    "email": "pedro@creativestudio.com",
+    "website": "www.creativestudio.com"
+  },
+  {
+    "name": "Ana Oliveira",
+    "title": "Analista de Sistemas",
+    "company": "DataTech Corp",
+    "phone": "(11) 66666-6666",
+    "email": "ana@datatech.com",
+    "website": "www.datatech.com"
+  },
+  {
+    "name": "Carlos Mendes",
+    "title": "Arquiteto de Software",
+    "company": "Cloud Solutions",
+    "phone": "(11) 55555-5555",
+    "email": "carlos@cloudsolutions.com",
+    "website": "www.cloudsolutions.com"
+  },
+  {
+    "name": "Fernanda Lima",
+    "title": "Product Manager",
+    "company": "StartupXYZ",
+    "phone": "(11) 44444-4444",
+    "email": "fernanda@startupxyz.com",
+    "website": "www.startupxyz.com"
+  },
+  {
+    "name": "Roberto Alves",
+    "title": "DevOps Engineer",
+    "company": "InfraTech",
+    "phone": "(11) 33333-3333",
+    "email": "roberto@infratech.com",
+    "website": "www.infratech.com"
+  },
+  {
+    "name": "Juliana Rocha",
+    "title": "Marketing Digital",
+    "company": "Growth Agency",
+    "phone": "(11) 22222-2222",
+    "email": "juliana@growthagency.com",
+    "website": "www.growthagency.com"
+  },
+  {
+    "name": "Lucas Ferreira",
+    "title": "Consultor de TI",
+    "company": "TechConsult",
+    "phone": "(11) 11111-1111",
+    "email": "lucas@techconsult.com",
+    "website": "www.techconsult.com"
+  },
+  {
+    "name": "Patricia Souza",
+    "title": "Especialista em Segurança",
+    "company": "SecureTech",
+    "phone": "(11) 00000-0000",
+    "email": "patricia@securetech.com",
+    "website": "www.securetech.com"
+  },
+  {
+    "name": "Rafael Martins",
+    "title": "Mobile Developer",
+    "company": "AppFactory",
+    "phone": "(11) 12345-6789",
+    "email": "rafael@appfactory.com",
+    "website": "www.appfactory.com"
+  },
+  {
+    "name": "Camila Torres",
+    "title": "Data Scientist",
+    "company": "AI Solutions",
+    "phone": "(11) 98765-4321",
+    "email": "camila@aisolutions.com",
+    "website": "www.aisolutions.com"
+  }
+]
