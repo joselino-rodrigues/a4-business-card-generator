@@ -1,12 +1,8 @@
 # Arquivos de desenvolvimento
-src/
-bin/
-templates/
 examples/
 .gitignore
-README.md
-LICENSE
+INSTALACAO.md
+background.jpg
 
 # Arquivos de configuração
-package.json
 package-lock.json

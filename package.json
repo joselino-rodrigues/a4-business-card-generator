@@ -20,7 +20,7 @@
     "cartão-visita",
     "pdfkit"
   ],
-  "author": "Seu Nome",
+  "author": "Joselino Rodrigues <joselino.rodrigues@unifesp.br>",
   "license": "MIT",
   "dependencies": {
     "commander": "^11.1.0",
@@ -36,10 +36,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/seu-usuario/a4-business-card-generator.git"
+    "url": "git+https://github.com/joselino-rodrigues/a4-business-card-generator.git"
   },
   "bugs": {
-    "url": "https://github.com/seu-usuario/a4-business-card-generator/issues"
+    "url": "https://github.com/joselino-rodrigues/a4-business-card-generator/issues"
   },
-  "homepage": "https://github.com/seu-usuario/a4-business-card-generator#readme"
+  "homepage": "https://github.com/joselino-rodrigues/a4-business-card-generator#readme"
 }
