@@ -8,8 +8,13 @@ Um pacote npm que permite criar cartões de visita personalizados organizados em
 - **Layout**: Organização automática em grade 2x5 (10 cartões por página A4)
 - **Margens**: 10 mm de margem em todas as bordas
 - **Formato**: PDF pronto para impressão
-- **Template**: Design profissional com suporte a logos
-- **Validação**: Validação completa de dados de entrada
+- **Design MÉDICO PROFISSIONAL**: Cores médicas, tipografia elegante e autoridade
+- **Imagem de Fundo**: Imagem completa como fundo com transparência otimizada
+- **QR Code ULTRA RESOLUÇÃO**: QR Code com resolução 16x, nitidez aplicada e qualidade máxima
+- **Suporte Médico Completo**: Campos específicos para médicos (CRM, especialidades, RQE, graduação)
+- **Múltiplos Cartões**: 10 cartões da mesma pessoa por padrão
+- **Validação Inteligente**: Validação específica para cartões médicos e padrão
+- **Informações Acadêmicas**: Suporte a universidade e ano de formatura
 
 ## 🚀 Instalação
 
@@ -26,22 +31,23 @@ npm install a4-business-card-generator
 npx a4-business-card-generator create --data examples/sample.json --output cartoes.pdf
 ```
 
-#### Outros Comandos Disponíveis
+#### Comandos com Funcionalidades MÉDICAS PROFISSIONAIS
 
 ```bash
-# Gerar PDF a partir de JSON
+# Gerar cartões médicos profissionais (10 por padrão)
+npx a4-business-card-generator create --data cartao-medico.json --output cartoes-medicos.pdf
+
+# Personalizar quantidade de cartões médicos
+npx a4-business-card-generator create --data cartao-medico.json --duplicate 20 --output muitos-cartoes-medicos.pdf
+
+# Gerar PDF com QR Code de alta qualidade
+npx a4-business-card-generator create --data cartao-medico.json --output cartao-medico-qr.pdf
+
+# Outros comandos disponíveis
 npx a4-business-card-generator generate examples/sample.json -o cartoes.pdf
-
-# Criar template JSON
 npx a4-business-card-generator template -o meu-template.json
-
-# Validar arquivo JSON
 npx a4-business-card-generator validate examples/sample.json
-
-# Gerar PDF de exemplo
 npx a4-business-card-generator sample -o exemplo.pdf
-
-# Mostrar informações
 npx a4-business-card-generator info
 ```
 
@@ -50,27 +56,31 @@ npx a4-business-card-generator info
 ```javascript
 const { generateBusinessCards, generateFromJSON } = require('a4-business-card-generator');
 
-// Gerar PDF a partir de array de cartões
-const cards = [
+// Gerar PDF MÉDICO PROFISSIONAL a partir de array de cartões
+const medicalCards = [
     {
-        name: "João Silva",
-        title: "Desenvolvedor Full Stack",
-        company: "Tech Solutions",
+        name: "Dr. João Silva",
+        professional: "Médico de Família e Comunidade",
+        crm: "12345",
+        crm_uf: "SP",
         phone: "(11) 99999-9999",
-        email: "joao@techsolutions.com",
-        website: "www.techsolutions.com",
-        logo: "./logo.png"
+        email: "joao@clinica.com",
+        website: "www.clinica.com.br",
+        logo: "./background.jpg"  // Imagem como fundo completo
     }
 ];
 
-const outputPath = await generateBusinessCards(cards, {
-    output: 'meus-cartoes.pdf',
-    showCutLines: true
+// Gerar múltiplos cartões médicos da mesma pessoa
+const outputPath = await generateBusinessCards(medicalCards, {
+    output: 'cartoes-medicos.pdf',
+    showCutLines: true,
+    duplicateCards: 10  // 10 cartões da mesma pessoa
 });
 
-// Gerar PDF a partir de arquivo JSON
-const pdfPath = await generateFromJSON('dados.json', {
-    output: 'cartoes.pdf'
+// Gerar PDF a partir de arquivo JSON médico
+const pdfPath = await generateFromJSON('cartao-medico.json', {
+    output: 'cartoes-medicos.pdf',
+    duplicateCards: 20  // 20 cartões da mesma pessoa
 });
 ```
 
@@ -79,16 +89,45 @@ const pdfPath = await generateFromJSON('dados.json', {
 ### Campos Obrigatórios
 - `name`: Nome da pessoa
 
-### Campos Opcionais
+### Campos para Cartões Médicos
+- `name`: Nome completo do médico
+- `crm`: Número do CRM (ex: "27323")
+- `crm_uf`: Estado do CRM (ex: "SP", "RJ", "BA")
+- `professional`: Especialidades médicas com RQE (ex: "MEDICINA DO TRÁFEGO - RQE Nº: 17192\nMEDICINA DE FAMÍLIA E COMUNIDADE - RQE Nº: 22526")
+- `graduation`: Instituição de graduação (ex: "UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA")
+- `graduation_year`: Ano de formatura (ex: "2014")
+- `phone`: Telefone (formato: (XX) XXXXX-XXXX)
+- `email`: Email
+- `website`: Website
+- `logo`: Caminho para imagem de fundo (PNG, JPG, JPEG, GIF, BMP, SVG)
+
+### Campos para Cartões Padrão
 - `title`: Cargo/Título
 - `company`: Empresa
 - `phone`: Telefone (formato: (XX) XXXXX-XXXX)
 - `email`: Email
 - `website`: Website
-- `logo`: Caminho para logo (PNG, JPG, JPEG, GIF, BMP, SVG)
+- `logo`: Caminho para imagem de fundo (PNG, JPG, JPEG, GIF, BMP, SVG)
 
-### Exemplo de Arquivo JSON
+### Exemplo de Cartão Médico Completo
+```json
+[
+  {
+    "name": "JOSELINO RODRIGUES",
+    "crm": "27323",
+    "crm_uf": "BA",
+    "professional": "MEDICINA DO TRÁFEGO - RQE Nº: 17192\nMEDICINA DE FAMÍLIA E COMUNIDADE - RQE Nº: 22526",
+    "graduation": "UNIVERSIDADE ESTADUAL DE FEIRA DE SANTANA",
+    "graduation_year": "2014",
+    "phone": "(75) 98121-0488",
+    "email": "joselino.rodrigues@unifesp.br",
+    "website": "www.telemedicina.com.br",
+    "logo": "./background.jpg"
+  }
+]
+```
 
+### Exemplo de Cartão Padrão
 ```json
 [
   {
@@ -98,15 +137,7 @@ const pdfPath = await generateFromJSON('dados.json', {
     "phone": "(11) 99999-9999",
     "email": "joao@techsolutions.com",
     "website": "www.techsolutions.com",
-    "logo": "./logo.png"
-  },
-  {
-    "name": "Maria Oliveira",
-    "title": "Designer Gráfico",
-    "company": "Creative Studio",
-    "phone": "(11) 98888-8888",
-    "email": "maria@creativestudio.com",
-    "website": "www.creativestudio.com"
+    "logo": "./background.jpg"
   }
 ]
 ```
@@ -116,6 +147,7 @@ const pdfPath = await generateFromJSON('dados.json', {
 ### CLI
 - `--data <path>`: Caminho para arquivo JSON
 - `--output <path>`: Arquivo de saída PDF (padrão: cartoes.pdf)
+- `--duplicate <number>`: Quantos cartões da mesma pessoa (padrão: 10)
 - `--no-cut-lines`: Desabilitar linhas de corte
 - `--margin <size>`: Margem da página em mm (padrão: 10)
 - `--spacing <size>`: Espaçamento entre cartões em mm (padrão: 5)
@@ -126,6 +158,7 @@ const pdfPath = await generateFromJSON('dados.json', {
 const options = {
     output: 'cartoes.pdf',           // Arquivo de saída
     showCutLines: true,              // Mostrar linhas de corte
+    duplicateCards: 10,              // Quantos cartões da mesma pessoa
     template: './meu-template.js',   // Template personalizado
     margin: 10,                      // Margem em mm
     spacing: 5                       // Espaçamento em mm
@@ -134,29 +167,48 @@ const options = {
 
 ## 🎨 Personalização
 
-### Template Personalizado
+### Template Personalizado PREMIUM
 
 Crie um arquivo `meu-template.js`:
 
 ```javascript
 module.exports = {
+    // Fontes otimizadas
     font: 'Helvetica',
     fontSize: {
-        name: 16,
-        title: 12,
-        company: 11,
-        contact: 10
+        name: 14,      // Nome da pessoa
+        title: 11,     // Cargo/título
+        company: 10,   // Empresa
+        contact: 9     // Informações de contato
     },
+    
+    // Paleta de cores PREMIUM
     colors: {
-        primary: '#333333',
-        secondary: '#666666',
-        accent: '#007bff',
-        contact: '#555555'
+        primary: '#1a1a1a',        // Preto elegante
+        secondary: '#4a4a4a',      // Cinza escuro
+        accent: '#2563eb',         // Azul moderno
+        highlight: '#f59e0b',      // Dourado
+        textPrimary: '#111827',    // Texto principal
+        textSecondary: '#6b7280'   // Texto secundário
     },
+    
+    // Layout PREMIUM
     layout: {
-        padding: 10,
-        logoHeight: 30,
-        logoWidth: 30
+        padding: 15,               // Padding interno
+        logoHeight: 40,            // Logo maior
+        logoWidth: 40,             // Logo maior
+        borderRadius: 8,           // Bordas arredondadas
+        shadowOffset: 2,           // Sombra sutil
+        shadowBlur: 4              // Desfoque da sombra
+    },
+    
+    // QR Code otimizado
+    qrCode: {
+        enabled: true,             // Habilitar QR Code
+        size: 50,                  // Tamanho otimizado
+        position: 'bottom-right',  // Posição
+        color: '#1a1a1a',          // Cor do QR Code
+        backgroundColor: '#ffffff'  // Cor de fundo
     }
 };
 ```
@@ -168,6 +220,11 @@ module.exports = {
 - **Cartões por página**: 10 (2 colunas x 5 linhas)
 - **Margens**: 10 mm (28.35 pontos)
 - **Espaçamento**: 5 mm (14.17 pontos)
+- **QR Code**: 50x50 pontos (tamanho otimizado)
+- **Resolução QR Code**: 16x para máxima qualidade
+- **Processamento QR Code**: Lanczos3 + nitidez + antialiasing
+- **Imagem de fundo**: Redimensionada para cobrir todo o cartão
+- **Transparência**: 30% para legibilidade do texto
 - **Conversão**: 1 mm = 2.83465 pontos
 
 ## 🔧 Dependências
@@ -175,6 +232,7 @@ module.exports = {
 - `pdfkit`: Geração de PDF
 - `commander`: Interface de linha de comando
 - `sharp`: Processamento de imagens (logos)
+- `qrcode`: Geração de QR Codes
 
 ## 📁 Estrutura do Projeto
 
@@ -237,11 +295,57 @@ Se encontrar problemas ou tiver dúvidas:
 2. Consulte os exemplos fornecidos
 3. Abra uma issue no GitHub
 
+## ✨ Funcionalidades MÉDICAS PROFISSIONAIS
+
+### 🏥 **Design Médico Sofisticado**
+- **Cores médicas profissionais** (azul médico, verde confiança, dourado elegante)
+- **Tipografia hierárquica** (nome > especialidades > CRM > contatos)
+- **Layout médico específico** com CRM destacado em fundo azul
+- **Sombras elegantes** para profundidade visual
+- **Linhas decorativas** médicas
+
+### 🖼️ **Imagem de Fundo Completa**
+- **Imagem redimensionada** para cobrir todo o cartão
+- **Transparência de 30%** para legibilidade otimizada
+- **Posicionamento central** com ajuste automático
+- **Qualidade preservada** com Sharp (algoritmo Lanczos3)
+
+### 📱 **QR Code Ultra Resolução**
+- **Tamanho otimizado** (50x50 pontos)
+- **Resolução 16x maior** para máxima nitidez
+- **Qualidade H** (errorCorrectionLevel)
+- **Algoritmo Lanczos3** para redimensionamento
+- **Nitidez aplicada** (sharpen com parâmetros otimizados)
+- **Antialiasing** para bordas suaves
+- **Qualidade 100%** sem compressão
+- **Posicionamento inteligente** (canto inferior direito)
+
+### 🏥 **Suporte Médico Completo**
+- **Campos médicos**: `name`, `crm`, `crm_uf`, `professional`
+- **Especialidades com RQE**: Suporte a múltiplas especialidades
+- **Informações acadêmicas**: `graduation`, `graduation_year`
+- **Validação CRM**: Formato correto (números + estado)
+- **Layout médico**: CRM destacado com fundo especial
+- **Compatibilidade**: Suporte a cartões médicos e padrão
+
+### 🔄 **Múltiplos Cartões**
+- **10 cartões da mesma pessoa** por padrão
+- **Personalizável** com `--duplicate <número>`
+- **Ideal para distribuição** médica em massa
+- **Layout organizado** em grade 2x5
+
 ## 🎯 Roadmap
 
+- [x] Design PREMIUM com gradientes e sombras
+- [x] Logo como fundo do cartão
+- [x] QR Code otimizado
+- [x] Múltiplos cartões da mesma pessoa
+- [x] QR Code ultra resolução (16x)
+- [x] Suporte a especialidades com RQE
+- [x] Informações acadêmicas (graduação)
+- [x] Processamento avançado de imagem
 - [ ] Suporte a mais templates
 - [ ] Editor visual de cartões
 - [ ] Integração com APIs de CRM
-- [ ] Suporte a QR codes
 - [ ] Templates responsivos
 - [ ] Validação de logos online

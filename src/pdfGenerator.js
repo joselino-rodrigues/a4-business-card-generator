@@ -53,7 +53,7 @@ class PDFGenerator {
     }
     
     /**
-     * Gera PDF com cartões de visita
+     * Gera PDF com cartões de visita (com suporte a múltiplos cartões da mesma pessoa)
      * @param {Array} cardsData - Array com dados dos cartões validados
      * @param {string} outputPath - Caminho do arquivo de saída
      * @param {Object} options - Opções adicionais
@@ -68,6 +68,7 @@ class PDFGenerator {
         const config = {
             showCutLines: options.showCutLines !== false,
             template: options.template || this.template,
+            duplicateCards: options.duplicateCards || 10, // Quantos cartões da mesma pessoa
             ...options
         };
         
@@ -90,39 +91,81 @@ class PDFGenerator {
         const CardGenerator = require('./cardGenerator');
         const cardGenerator = new CardGenerator(config.template);
         
-        // Processar cartões em páginas
+        // Processar cartões - NOVA LÓGICA: múltiplos cartões da mesma pessoa
         let currentPage = 0;
         let cardsInCurrentPage = 0;
-        let totalCards = cardsData.length;
+        let totalCards = 0;
         
-        console.log(`🔄 Gerando PDF com ${totalCards} cartões...`);
+        console.log(`🔄 Gerando PDF com design PREMIUM...`);
+        console.log(`📋 Modo: ${cardsData.length === 1 ? 'Múltiplos cartões da mesma pessoa' : 'Cartões individuais'}`);
         
-        for (let i = 0; i < totalCards; i++) {
-            // Se necessário, criar nova página
-            if (cardsInCurrentPage === 0) {
-                if (i > 0) {
-                    doc.addPage();
+        // Se há apenas uma pessoa, criar múltiplos cartões dela
+        if (cardsData.length === 1) {
+            const personData = cardsData[0];
+            const duplicatedCards = Array(config.duplicateCards).fill(personData);
+            totalCards = config.duplicateCards;
+            
+            console.log(`👤 Criando ${config.duplicateCards} cartões para: ${personData.name}`);
+            
+            for (let i = 0; i < duplicatedCards.length; i++) {
+                // Se necessário, criar nova página
+                if (cardsInCurrentPage === 0) {
+                    if (i > 0) {
+                        doc.addPage();
+                    }
+                    currentPage++;
+                    console.log(`📄 Criando página ${currentPage}...`);
                 }
-                currentPage++;
-                console.log(`📄 Criando página ${currentPage}...`);
+                
+                // Obter posição do cartão na página atual
+                const position = this.cardPositions[cardsInCurrentPage];
+                
+                // Desenhar cartão PREMIUM
+                await cardGenerator.drawCard(doc, duplicatedCards[i], position);
+                
+                // Desenhar linhas de corte se habilitado
+                if (config.showCutLines) {
+                    cardGenerator.drawCutLines(doc, position.x, position.y, position.width, position.height);
+                }
+                
+                cardsInCurrentPage++;
+                
+                // Se completou uma página (10 cartões), resetar contador
+                if (cardsInCurrentPage === this.template.page.cardsPerPage) {
+                    cardsInCurrentPage = 0;
+                }
             }
+        } else {
+            // Modo tradicional: cartões de pessoas diferentes
+            totalCards = cardsData.length;
             
-            // Obter posição do cartão na página atual
-            const position = this.cardPositions[cardsInCurrentPage];
-            
-            // Desenhar cartão
-            await cardGenerator.drawCard(doc, cardsData[i], position);
-            
-            // Desenhar linhas de corte se habilitado
-            if (config.showCutLines) {
-                cardGenerator.drawCutLines(doc, position.x, position.y, position.width, position.height);
-            }
-            
-            cardsInCurrentPage++;
-            
-            // Se completou uma página (10 cartões), resetar contador
-            if (cardsInCurrentPage === this.template.page.cardsPerPage) {
-                cardsInCurrentPage = 0;
+            for (let i = 0; i < cardsData.length; i++) {
+                // Se necessário, criar nova página
+                if (cardsInCurrentPage === 0) {
+                    if (i > 0) {
+                        doc.addPage();
+                    }
+                    currentPage++;
+                    console.log(`📄 Criando página ${currentPage}...`);
+                }
+                
+                // Obter posição do cartão na página atual
+                const position = this.cardPositions[cardsInCurrentPage];
+                
+                // Desenhar cartão PREMIUM
+                await cardGenerator.drawCard(doc, cardsData[i], position);
+                
+                // Desenhar linhas de corte se habilitado
+                if (config.showCutLines) {
+                    cardGenerator.drawCutLines(doc, position.x, position.y, position.width, position.height);
+                }
+                
+                cardsInCurrentPage++;
+                
+                // Se completou uma página (10 cartões), resetar contador
+                if (cardsInCurrentPage === this.template.page.cardsPerPage) {
+                    cardsInCurrentPage = 0;
+                }
             }
         }
         
@@ -131,11 +174,12 @@ class PDFGenerator {
         
         return new Promise((resolve, reject) => {
             stream.on('finish', () => {
-                console.log(`✅ PDF gerado com sucesso: ${outputPath}`);
+                console.log(`✅ PDF PREMIUM gerado com sucesso: ${outputPath}`);
                 console.log(`📊 Estatísticas:`);
                 console.log(`   - Total de cartões: ${totalCards}`);
                 console.log(`   - Total de páginas: ${currentPage}`);
                 console.log(`   - Cartões por página: ${this.template.page.cardsPerPage}`);
+                console.log(`   - Design: PREMIUM com gradientes e sombras`);
                 resolve(outputPath);
             });
             

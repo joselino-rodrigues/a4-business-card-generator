@@ -14,8 +14,8 @@ function validateCard(card, index = 0) {
     // Campos obrigatórios
     const requiredFields = ['name'];
     
-    // Campos opcionais
-    const optionalFields = ['title', 'company', 'phone', 'email', 'website', 'logo'];
+    // Campos opcionais (médico e padrão)
+    const optionalFields = ['title', 'company', 'professional', 'crm', 'crm_uf', 'phone', 'email', 'website', 'logo'];
     
     // Verificar se o objeto existe
     if (!card || typeof card !== 'object') {
@@ -51,6 +51,7 @@ function validateCard(card, index = 0) {
     validateWebsite(cleanCard.website, index);
     validatePhone(cleanCard.phone, index);
     validateLogo(cleanCard.logo, index);
+    validateCRM(cleanCard.crm, cleanCard.crm_uf, index);
     
     return cleanCard;
 }
@@ -134,6 +135,33 @@ function validateLogo(logo, index) {
 }
 
 /**
+ * Valida CRM (Conselho Regional de Medicina)
+ * @param {string} crm - Número do CRM
+ * @param {string} crm_uf - Estado do CRM
+ * @param {number} index - Índice do cartão
+ * @throws {Error} - Se o CRM for inválido
+ */
+function validateCRM(crm, crm_uf, index) {
+    // Se não tem CRM, não precisa validar
+    if (!crm && !crm_uf) return;
+    
+    // Se tem um, deve ter o outro
+    if ((crm && !crm_uf) || (!crm && crm_uf)) {
+        throw new Error(`Cartão ${index + 1}: CRM e CRM_UF devem ser fornecidos juntos`);
+    }
+    
+    // Validar formato do CRM (apenas números)
+    if (crm && !/^\d+$/.test(crm)) {
+        throw new Error(`Cartão ${index + 1}: CRM deve conter apenas números`);
+    }
+    
+    // Validar formato do CRM_UF (2 letras maiúsculas)
+    if (crm_uf && !/^[A-Z]{2}$/.test(crm_uf)) {
+        throw new Error(`Cartão ${index + 1}: CRM_UF deve ter 2 letras maiúsculas (ex: BA, SP, RJ)`);
+    }
+}
+
+/**
  * Valida um array de cartões
  * @param {Array} cards - Array de cartões
  * @returns {Array} - Array de cartões validados
@@ -208,5 +236,6 @@ module.exports = {
     validateEmail,
     validateWebsite,
     validatePhone,
-    validateLogo
+    validateLogo,
+    validateCRM
 };

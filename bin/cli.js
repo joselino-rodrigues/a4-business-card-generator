@@ -18,13 +18,14 @@ program
  */
 program
     .command('create')
-    .description('Cria PDF de cartões de visita a partir de arquivo JSON')
+    .description('Cria PDF de cartões de visita PREMIUM a partir de arquivo JSON')
     .option('--data <path>', 'Caminho para arquivo JSON com dados dos cartões')
     .option('--output <path>', 'Caminho para o PDF gerado', 'cartoes.pdf')
     .option('--no-cut-lines', 'Desabilitar linhas de corte')
     .option('--margin <size>', 'Margem da página em mm', '10')
     .option('--spacing <size>', 'Espaçamento entre cartões em mm', '5')
     .option('--template <path>', 'Caminho para template personalizado')
+    .option('--duplicate <number>', 'Quantos cartões da mesma pessoa (padrão: 10)', '10')
     .action(async (options) => {
         try {
             console.log('🚀 A4 Business Card Generator');
@@ -53,7 +54,8 @@ program
                 showCutLines: options.cutLines !== false,
                 margin: parseFloat(options.margin),
                 spacing: parseFloat(options.spacing),
-                template: options.template
+                template: options.template,
+                duplicateCards: parseInt(options.duplicate)
             };
             
             // Gerar PDF

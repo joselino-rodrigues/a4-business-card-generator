@@ -1,0 +1,11 @@
+[
+  {
+    "name": "João Silva",
+    "title": "Desenvolvedor Full Stack",
+    "company": "Tech Solutions",
+    "phone": "(11) 99999-9999",
+    "email": "joao@techsolutions.com",
+    "website": "www.techsolutions.com",
+    "logo": "./logo.png"
+  }
+]
