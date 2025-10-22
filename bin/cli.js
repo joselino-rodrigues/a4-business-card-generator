@@ -3,18 +3,73 @@
 const { Command } = require('commander');
 const fs = require('fs');
 const path = require('path');
-const BusinessCardGenerator = require('../src/index');
+const { generateFromJSON, generateSamplePDF, validateCardsData } = require('../src/index');
 
 const program = new Command();
 
 // Configurar informações do programa
 program
-    .name('a4-business-card')
-    .description('Gerador de cartões de visita em formato A4 para impressão')
+    .name('a4-business-card-generator')
+    .description('Gera cartões de visita em PDF para impressão em A4')
     .version('1.0.0');
 
 /**
- * Comando para gerar PDF a partir de arquivo JSON
+ * Comando principal para criar cartões de visita
+ */
+program
+    .command('create')
+    .description('Cria PDF de cartões de visita a partir de arquivo JSON')
+    .option('--data <path>', 'Caminho para arquivo JSON com dados dos cartões')
+    .option('--output <path>', 'Caminho para o PDF gerado', 'cartoes.pdf')
+    .option('--no-cut-lines', 'Desabilitar linhas de corte')
+    .option('--margin <size>', 'Margem da página em mm', '10')
+    .option('--spacing <size>', 'Espaçamento entre cartões em mm', '5')
+    .option('--template <path>', 'Caminho para template personalizado')
+    .action(async (options) => {
+        try {
+            console.log('🚀 A4 Business Card Generator');
+            console.log('============================');
+            
+            // Verificar se arquivo de dados foi fornecido
+            if (!options.data) {
+                console.error('❌ Erro: Arquivo de dados não fornecido');
+                console.log('💡 Use --data <path> para especificar o arquivo JSON');
+                console.log('💡 Exemplo: npx a4-business-card-generator create --data examples/sample.json');
+                process.exit(1);
+            }
+            
+            // Verificar se arquivo JSON existe
+            if (!fs.existsSync(options.data)) {
+                console.error(`❌ Arquivo não encontrado: ${options.data}`);
+                process.exit(1);
+            }
+            
+            console.log(`📖 Lendo dados de: ${options.data}`);
+            console.log(`📄 Arquivo de saída: ${options.output}`);
+            
+            // Configurar opções
+            const config = {
+                output: options.output,
+                showCutLines: options.cutLines !== false,
+                margin: parseFloat(options.margin),
+                spacing: parseFloat(options.spacing),
+                template: options.template
+            };
+            
+            // Gerar PDF
+            const outputPath = await generateFromJSON(options.data, config);
+            
+            console.log(`✅ PDF gerado com sucesso: ${outputPath}`);
+            console.log('🎉 Pronto para impressão!');
+            
+        } catch (error) {
+            console.error(`❌ Erro: ${error.message}`);
+            process.exit(1);
+        }
+    });
+
+/**
+ * Comando para gerar PDF a partir de arquivo JSON (comando alternativo)
  */
 program
     .command('generate')
@@ -34,21 +89,16 @@ program
                 process.exit(1);
             }
             
-            // Configurar opções do gerador
-            const generatorOptions = {
-                showCutLines: options.cutLines,
-                marginTop: parseFloat(options.margin) * 2.834645669, // Converter mm para pontos
-                marginLeft: parseFloat(options.margin) * 2.834645669,
-                marginRight: parseFloat(options.margin) * 2.834645669,
-                marginBottom: parseFloat(options.margin) * 2.834645669,
-                cardSpacing: parseFloat(options.spacing) * 2.834645669
+            // Configurar opções
+            const config = {
+                output: options.output,
+                showCutLines: options.cutLines !== false,
+                margin: parseFloat(options.margin),
+                spacing: parseFloat(options.spacing)
             };
             
-            // Criar instância do gerador
-            const generator = new BusinessCardGenerator(generatorOptions);
-            
             // Gerar PDF
-            const outputPath = await generator.generateFromJSON(jsonFile, options.output);
+            const outputPath = await generateFromJSON(jsonFile, config);
             
             console.log(`✅ PDF gerado com sucesso: ${outputPath}`);
             
@@ -71,33 +121,26 @@ program
                 {
                     "name": "João Silva",
                     "title": "Desenvolvedor Full Stack",
-                    "company": "Tech Solutions Ltda",
+                    "company": "Tech Solutions",
                     "phone": "(11) 99999-9999",
                     "email": "joao@techsolutions.com",
                     "website": "www.techsolutions.com",
-                    "logo": "path/to/logo.png"
+                    "logo": "./logo.png"
                 },
                 {
-                    "name": "Maria Santos",
-                    "title": "Gerente de Projetos",
-                    "company": "Inovação Digital",
-                    "phone": "(11) 88888-8888",
-                    "email": "maria@inovacaodigital.com",
-                    "website": "www.inovacaodigital.com"
-                },
-                {
-                    "name": "Pedro Costa",
-                    "title": "Designer UX/UI",
+                    "name": "Maria Oliveira",
+                    "title": "Designer Gráfico",
                     "company": "Creative Studio",
-                    "phone": "(11) 77777-7777",
-                    "email": "pedro@creativestudio.com",
-                    "website": "www.creativestudio.com"
+                    "phone": "(11) 98888-8888",
+                    "email": "maria@creativestudio.com",
+                    "website": "www.creativestudio.com",
+                    "logo": "./logo.png"
                 }
             ];
             
             fs.writeFileSync(options.output, JSON.stringify(template, null, 2));
             console.log(`✅ Template criado: ${options.output}`);
-            console.log('📝 Edite o arquivo com seus dados e use o comando generate');
+            console.log('📝 Edite o arquivo com seus dados e use o comando create');
             
         } catch (error) {
             console.error(`❌ Erro ao criar template: ${error.message}`);
@@ -131,34 +174,45 @@ program
                 process.exit(1);
             }
             
-            // Validar cada cartão
-            const generator = new BusinessCardGenerator();
-            let validCards = 0;
-            let errors = [];
-            
-            cardsData.forEach((card, index) => {
-                try {
-                    generator.validateCardData(card);
-                    validCards++;
-                } catch (error) {
-                    errors.push(`Cartão ${index + 1}: ${error.message}`);
-                }
-            });
+            // Validar cartões usando a função de validação
+            const validation = validateCardsData(cardsData);
             
             // Exibir resultados
             console.log(`📊 Total de cartões: ${cardsData.length}`);
-            console.log(`✅ Cartões válidos: ${validCards}`);
             
-            if (errors.length > 0) {
-                console.log(`❌ Erros encontrados:`);
-                errors.forEach(error => console.log(`   - ${error}`));
-                process.exit(1);
-            } else {
+            if (validation.valid) {
+                console.log(`✅ Cartões válidos: ${validation.count}`);
                 console.log('🎉 Todos os cartões são válidos!');
+            } else {
+                console.log(`❌ Erros encontrados:`);
+                console.log(`   ${validation.message}`);
+                process.exit(1);
             }
             
         } catch (error) {
             console.error(`❌ Erro ao validar arquivo: ${error.message}`);
+            process.exit(1);
+        }
+    });
+
+/**
+ * Comando para gerar PDF de exemplo
+ */
+program
+    .command('sample')
+    .description('Gera um PDF de exemplo com cartões de demonstração')
+    .option('-o, --output <file>', 'Arquivo de saída PDF', 'sample-cards.pdf')
+    .action(async (options) => {
+        try {
+            console.log('🎨 Gerando PDF de exemplo...');
+            
+            const outputPath = await generateSamplePDF({ output: options.output });
+            
+            console.log(`✅ PDF de exemplo gerado: ${outputPath}`);
+            console.log('🎉 Pronto para visualização!');
+            
+        } catch (error) {
+            console.error(`❌ Erro: ${error.message}`);
             process.exit(1);
         }
     });
@@ -192,10 +246,15 @@ program
         console.log('   - logo: Caminho para logo (PNG/JPG)');
         console.log('');
         console.log('🚀 Comandos disponíveis:');
-        console.log('   generate <json-file>  - Gera PDF a partir de JSON');
+        console.log('   create --data <file>  - Cria PDF a partir de JSON');
+        console.log('   generate <file>       - Gera PDF a partir de JSON');
         console.log('   template              - Cria template JSON');
-        console.log('   validate <json-file>   - Valida arquivo JSON');
+        console.log('   validate <file>        - Valida arquivo JSON');
+        console.log('   sample                - Gera PDF de exemplo');
         console.log('   info                  - Mostra esta informação');
+        console.log('');
+        console.log('💡 Exemplo de uso:');
+        console.log('   npx a4-business-card-generator create --data examples/sample.json --output cartoes.pdf');
     });
 
 // Configurar tratamento de erros

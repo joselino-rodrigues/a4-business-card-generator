@@ -1,0 +1,12 @@
+# Arquivos de desenvolvimento
+src/
+bin/
+templates/
+examples/
+.gitignore
+README.md
+LICENSE
+
+# Arquivos de configuração
+package.json
+package-lock.json
